@@ -8,8 +8,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.xiaoyu.ride_casually.RideCasually;
 import net.xiaoyu.ride_casually.util.RideManager;
-import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
-import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 
 @EventBusSubscriber(modid = RideCasually.MOD_ID)
 public class NetworkHandler {
@@ -28,24 +26,17 @@ public class NetworkHandler {
                             if (targetEntity != null) {
                                 RideManager.addModRidingPlayer(sender);
                                 sender.startRiding(targetEntity);
-                                syncWithPlayers(sender, targetEntity);
+                                RideManager.syncWithPlayers(sender, targetEntity);
                             }
                         } else {
                             Entity vehicle = sender.getVehicle();
                             sender.stopRiding();
                             RideManager.removeModRidingPlayer(sender);
-                            syncWithPlayers(sender, vehicle);
+                            RideManager.syncWithPlayers(sender, vehicle);
                         }
                     }
                 });
             }
         );
-    }
-    
-    private static void syncWithPlayers(ServerPlayer player, Entity entity) {
-        if (entity != null) {
-            player.getServer().getPlayerList().broadcastAll(new ClientboundSetPassengersPacket(entity));
-        }
-        player.getServer().getPlayerList().broadcastAll(new ClientboundTeleportEntityPacket(player));
     }
 }

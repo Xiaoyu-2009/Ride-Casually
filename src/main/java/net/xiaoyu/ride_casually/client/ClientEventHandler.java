@@ -14,6 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.xiaoyu.ride_casually.ModKeyBindings;
 import net.xiaoyu.ride_casually.RideCasually;
 import net.xiaoyu.ride_casually.network.RidePacket;
+import net.xiaoyu.ride_casually.util.RideManager;
 
 @EventBusSubscriber(modid = RideCasually.MOD_ID)
 public class ClientEventHandler {
@@ -32,6 +33,7 @@ public class ClientEventHandler {
             );
 
             PacketDistributor.sendToServer(new RidePacket(targetEntity.getId(), true));
+            RideManager.addModRidingPlayer(mc.player);
         }
     }
     
@@ -41,6 +43,7 @@ public class ClientEventHandler {
         
         if (mc.player != null && mc.player.isPassenger() && mc.options.keyShift.isDown()) {
             PacketDistributor.sendToServer(new RidePacket(0, false));
+            RideManager.removeModRidingPlayer(mc.player);
         }
     }
 }
