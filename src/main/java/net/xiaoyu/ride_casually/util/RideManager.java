@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class RideManager {
     private static final Set<UUID> modRidingPlayers = new HashSet<>();
-
+    
     public static void addModRidingPlayer(Player player) {
         modRidingPlayers.add(player.getUUID());
     }
