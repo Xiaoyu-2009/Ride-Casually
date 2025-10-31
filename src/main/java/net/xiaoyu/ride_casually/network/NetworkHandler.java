@@ -7,6 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.xiaoyu.ride_casually.RideCasually;
+import net.xiaoyu.ride_casually.util.RideManager;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 
@@ -25,12 +26,14 @@ public class NetworkHandler {
                         if (payload.startRiding()) {
                             Entity targetEntity = sender.level().getEntity(payload.entityId());
                             if (targetEntity != null) {
+                                RideManager.addModRidingPlayer(sender);
                                 sender.startRiding(targetEntity);
                                 syncWithPlayers(sender, targetEntity);
                             }
                         } else {
                             Entity vehicle = sender.getVehicle();
                             sender.stopRiding();
+                            RideManager.removeModRidingPlayer(sender);
                             syncWithPlayers(sender, vehicle);
                         }
                     }
