@@ -1,7 +1,9 @@
 package net.xiaoyu.ride_casually;
 
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.xiaoyu.ride_casually.util.BlockOffsetUtil;
@@ -14,9 +16,10 @@ public class RideCasually {
     public static final String MOD_ID = "ride_casually";
     public static final Logger LOGGER = LoggerFactory.getLogger(RideCasually.MOD_ID);
 
-    public RideCasually(IEventBus modEventBus) {
+    public RideCasually(IEventBus modEventBus, ModContainer modContainer) {
         BlockRideEntity.register(modEventBus);
         NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
+        modContainer.registerConfig(ModConfig.Type.COMMON, RideConfig.SPEC);
     }
     
     private void addReloadListeners(AddReloadListenerEvent event) {
