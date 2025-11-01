@@ -1,0 +1,11 @@
+{
+  "block_offsets": "minecraft:potted_dandelion",
+  "properties": {
+    "content": "minecraft:dandelion"
+  },
+  "coordinates": {
+    "offset_x": 0.5,
+    "offset_y": 0.6,
+    "offset_z": 0.5
+  }
+}

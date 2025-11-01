@@ -6,9 +6,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +27,11 @@ public record BlockOffsetData(Optional<String> block_offsets, Optional<Map<Strin
         if (this.block_offsets.isPresent()) {
             String blockOffset = this.block_offsets.get();
 
-            if (blockOffset.startsWith("#")) {
+            if (blockOffset.startsWith("@")) {
+                String modId = blockOffset.substring(1);
+                ResourceLocation blockLocation = BuiltInRegistries.BLOCK.getKey(block);
+                matches = modId.equals(blockLocation.getNamespace());
+            } else if (blockOffset.startsWith("#")) {
                 String tagId = blockOffset.substring(1);
                 ResourceLocation tagLocation = ResourceLocation.tryParse(tagId);
                 TagKey<Block> tagKey = TagKey.create(BuiltInRegistries.BLOCK.key(), tagLocation);
@@ -40,17 +44,14 @@ public record BlockOffsetData(Optional<String> block_offsets, Optional<Map<Strin
 
             if (matches && this.properties.isPresent()) {
                 Map<String, String> props = this.properties.get();
+                StateDefinition<Block, BlockState> stateDefinition = block.getStateDefinition();
                 for (Map.Entry<String, String> entry : props.entrySet()) {
-                    String property = entry.getKey();
-                    String value = entry.getValue();
-
-                    if ("type".equals(property)) {
-                        if (state.hasProperty(SlabBlock.TYPE)) {
-                            SlabType slabType = state.getValue(SlabBlock.TYPE);
-                            matches = slabType.toString().equals(value);
-                        } else {
-                            matches = false;
-                        }
+                    String propertyKey = entry.getKey();
+                    String propertyValue = entry.getValue();
+                    
+                    Property<?> property = stateDefinition.getProperty(propertyKey);
+                    if (property != null) {
+                        matches = state.getValue(property).toString().equals(propertyValue);
                     }
                 }
             }
