@@ -135,7 +135,7 @@ public class BlockRideUtil {
 
                         level.playSound(
                             null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                            SoundEvents.HORSE_SADDLE, SoundSource.NEUTRAL, 3.0F, 1.0F
+                            SoundEvents.HORSE_SADDLE, SoundSource.NEUTRAL, 2.0F, 1.0F
                         );
                     }
                 }
