@@ -1,4 +1,4 @@
-package net.xiaoyu.ride_casually.data;
+package net.xiaoyu.ride_casually.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,7 +13,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.state.BlockState;
 import net.xiaoyu.ride_casually.RideCasually;
-import net.xiaoyu.ride_casually.util.BlockRideUtil;
+import net.xiaoyu.ride_casually.data.BlockOffsetData;
 
 import java.util.*;
 
