@@ -17,24 +17,26 @@ import net.xiaoyu.ride_casually.util.BlockRideUtil;
 
 import java.util.*;
 
-public class BlockOffsetManager extends SimpleJsonResourceReloadListener {
+public class BlockOffsetUtil extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final BlockOffsetManager INSTANCE = new BlockOffsetManager();
+    private static final BlockOffsetUtil INSTANCE = new BlockOffsetUtil();
     
     private final List<BlockOffsetData> blockOffsets = new ArrayList<>();
+    private final List<BlockOffsetData> specificBlockOffsets = new ArrayList<>();
     private final Map<BlockState, BlockRideUtil.Offset> blockStateCache = new HashMap<>();
 
-    private BlockOffsetManager() {
+    private BlockOffsetUtil() {
         super(GSON, "block_offsets");
     }
 
-    public static BlockOffsetManager getInstance() {
+    public static BlockOffsetUtil getInstance() {
         return INSTANCE;
     }
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         this.blockOffsets.clear();
+        this.specificBlockOffsets.clear();
         this.blockStateCache.clear();
         
         RegistryOps<JsonElement> registryOps = RegistryOps.create(
@@ -60,6 +62,7 @@ public class BlockOffsetManager extends SimpleJsonResourceReloadListener {
 
         this.blockOffsets.addAll(specificOffsets);
         this.blockOffsets.addAll(defaultOffsets);
+        this.specificBlockOffsets.addAll(specificOffsets);
     }
 
     public BlockRideUtil.Offset getOffsetForBlock(BlockState state) {
@@ -82,6 +85,19 @@ public class BlockOffsetManager extends SimpleJsonResourceReloadListener {
             }
         }
 
+        return null;
+    }
+
+    public BlockRideUtil.Offset getSpecificOffsetForBlock(BlockState state) {
+        for (BlockOffsetData data : this.specificBlockOffsets) {
+            if (data.matches(state)) {
+                return new BlockRideUtil.Offset(
+                    data.coordinates().offset_x(), 
+                    data.coordinates().offset_y(), 
+                    data.coordinates().offset_z()
+                );
+            }
+        }
         return null;
     }
 }

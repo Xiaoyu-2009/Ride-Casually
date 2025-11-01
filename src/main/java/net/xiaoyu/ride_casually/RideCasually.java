@@ -4,7 +4,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.xiaoyu.ride_casually.data.BlockOffsetManager;
+import net.xiaoyu.ride_casually.util.BlockOffsetUtil;
 import net.xiaoyu.ride_casually.entity.BlockRideEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,6 @@ public class RideCasually {
     }
     
     private void addReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(BlockOffsetManager.getInstance());
+        event.addListener(BlockOffsetUtil.getInstance());
     }
 }

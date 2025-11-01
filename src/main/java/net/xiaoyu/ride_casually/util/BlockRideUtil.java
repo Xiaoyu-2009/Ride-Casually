@@ -1,16 +1,16 @@
 package net.xiaoyu.ride_casually.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.SupportType;
 import net.minecraft.resources.ResourceLocation;
-import net.xiaoyu.ride_casually.data.BlockOffsetManager;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.xiaoyu.ride_casually.entity.BlockRideEntity;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -34,13 +34,28 @@ public class BlockRideUtil {
 
     public static Offset getOffset(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
+        VoxelShape shape = state.getShape(level, pos);
 
-        Offset dataOffset = BlockOffsetManager.getInstance().getOffsetForBlock(state);
-        if (dataOffset != null) {
-            return dataOffset;
+        // data
+        Offset specificOffset = BlockOffsetUtil.getInstance().getSpecificOffsetForBlock(state);
+        if (specificOffset != null) {
+            return specificOffset;
         }
 
-        return new Offset(0.5D, 1.0D, 0.5D);
+        // 方块模型
+        if (!shape.isEmpty()) {
+            AABB bounds = shape.bounds();
+            return new Offset(0.5D, bounds.maxY, 0.5D);
+        }
+
+        // default.json
+        Offset defaultOffset = BlockOffsetUtil.getInstance().getOffsetForBlock(state);
+        if (defaultOffset != null) {
+            return defaultOffset;
+        }
+
+        // 默认返回
+        return new Offset(0.5D, 0.1D, 0.5D);
     }
 
     public static Vec3 getDismountLocationForPassenger(Player player, BlockRideEntity blockRideEntity) {
@@ -117,6 +132,11 @@ public class BlockRideUtil {
                     if (addBlockRideEntity(level, pos, rideEntity, player.position())) {
                         level.addFreshEntity(rideEntity);
                         player.startRiding(rideEntity);
+
+                        level.playSound(
+                            null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            SoundEvents.HORSE_SADDLE, SoundSource.NEUTRAL, 3.0F, 1.0F
+                        );
                     }
                 }
             }
