@@ -1,9 +1,11 @@
 package net.xiaoyu.ride_casually.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.xiaoyu.ride_casually.ModKeyBindings;
 import net.xiaoyu.ride_casually.RideCasually;
 import net.xiaoyu.ride_casually.network.RidePacket;
-import net.xiaoyu.ride_casually.util.RideManager;
+import net.xiaoyu.ride_casually.util.RideUtil;
 
 @EventBusSubscriber(modid = RideCasually.MOD_ID)
 public class ClientEventHandler {
@@ -23,17 +25,24 @@ public class ClientEventHandler {
     public static void onKeyInput(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (ModKeyBindings.RIDE_KEY.consumeClick() && mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.ENTITY) {
-            EntityHitResult entityHitResult = (EntityHitResult) mc.hitResult;
-            Entity targetEntity = entityHitResult.getEntity();
-            
-            mc.level.playSound(
-                mc.player, targetEntity.getX(), targetEntity.getY(), targetEntity.getZ(),
-                SoundEvents.HORSE_SADDLE, SoundSource.NEUTRAL, 3.0F, 1.0F
-            );
+        if (ModKeyBindings.RIDE_KEY.consumeClick() && mc.hitResult != null) {
+            if (mc.hitResult.getType() == HitResult.Type.ENTITY) {
+                EntityHitResult entityHitResult = (EntityHitResult) mc.hitResult;
+                Entity targetEntity = entityHitResult.getEntity();
+                
+                mc.level.playSound(
+                    mc.player, targetEntity.getX(), targetEntity.getY(), targetEntity.getZ(),
+                    SoundEvents.HORSE_SADDLE, SoundSource.NEUTRAL, 3.0F, 1.0F
+                );
 
-            PacketDistributor.sendToServer(new RidePacket(targetEntity.getId(), true));
-            RideManager.addModRidingPlayer(mc.player);
+                PacketDistributor.sendToServer(new RidePacket(targetEntity.getId(), true, BlockPos.ZERO, false));
+                RideUtil.addModRidingPlayer(mc.player);
+            } else if (mc.hitResult.getType() == HitResult.Type.BLOCK) {
+                BlockHitResult blockHitResult = (BlockHitResult) mc.hitResult;
+                BlockPos pos = blockHitResult.getBlockPos();
+
+                PacketDistributor.sendToServer(new RidePacket(0, false, pos, true));
+            }
         }
     }
     
@@ -42,8 +51,8 @@ public class ClientEventHandler {
         Minecraft mc = Minecraft.getInstance();
         
         if (mc.player != null && mc.player.isPassenger() && mc.options.keyShift.isDown()) {
-            PacketDistributor.sendToServer(new RidePacket(0, false));
-            RideManager.removeModRidingPlayer(mc.player);
+            PacketDistributor.sendToServer(new RidePacket(0, false, BlockPos.ZERO, false));
+            RideUtil.removeModRidingPlayer(mc.player);
         }
     }
 }

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class RideManager {
+public class RideUtil {
     private static final Set<UUID> modRidingPlayers = new HashSet<>();
     
     public static void addModRidingPlayer(Player player) {

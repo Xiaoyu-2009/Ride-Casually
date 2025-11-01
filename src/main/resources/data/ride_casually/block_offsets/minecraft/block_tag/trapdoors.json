@@ -1,0 +1,8 @@
+{
+  "block_offsets": "#minecraft:trapdoors",
+  "coordinates": {
+    "offset_x": 0.5,
+    "offset_y": 0.2,
+    "offset_z": 0.5
+  }
+}

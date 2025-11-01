@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
-import net.xiaoyu.ride_casually.util.RideManager;
+import net.xiaoyu.ride_casually.util.RideUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,7 +17,7 @@ public class EntityMixin {
     private void onMakeBoundingBox(CallbackInfoReturnable<AABB> cir) {
         Entity entity = (Entity) (Object) this;
 
-        if (entity instanceof Player player /* && player.isPassenger() */ && RideManager.isModRidingPlayer(player)) {
+        if (entity instanceof Player player /* && player.isPassenger() */ && RideUtil.isModRidingPlayer(player)) {
             EntityDimensions dimensions = entity.getDimensions(entity.getPose());
             AABB box = new AABB(
                 entity.position().x - (double)(dimensions.width() / 2.0F),

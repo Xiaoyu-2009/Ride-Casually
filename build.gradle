@@ -21,11 +21,20 @@ repositories {
     maven {
         url = "https://modmaven.dev"
     }
+    maven {
+        url "https://cursemaven.com"
+    }
 }
 
 dependencies {
     // JEI
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:19.25.0.322")
+
+    // kubejs
+    implementation "curse.maven:kubejs-238086:7143884"
+
+    // 犀牛
+    implementation "curse.maven:rhino-416294:7104526"
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

@@ -1,0 +1,11 @@
+{
+  "block_offsets": "#minecraft:slabs",
+  "properties": {
+    "type": "double"
+  },
+  "coordinates": {
+    "offset_x": 0.5,
+    "offset_y": 1.0,
+    "offset_z": 0.5
+  }
+}
